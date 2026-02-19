@@ -9,8 +9,7 @@ Combines structured data from MITRE ATT&CK (v18.1+) with the community-driven AP
 - APT Groups & Operations Google Sheet (automatically scans all 8+ regional tabs).
 - Smart Deduplication: Automatically merges duplicates. If a group exists in both sources, it prioritizes the rich structured data from MITRE while flagging it as "Verified by Multiple Sources".
 - Sector-Specific Search: Enhanced lookup with synonyms (e.g., searching healthcare also matches medical, hospital, pharma, медицина).
-- Memory-First Architecture: Processes large datasets entirely in RAM. No temporary database files or raw JSON dumps are left on the disk, ensuring operational security.
-- Clean Reporting: Exports a consolidated, deduplicated report in JSON format, ready for SIEM ingestion or executive briefing.
+- 
 ### Quick Start
 Python 3.6+
 requests
