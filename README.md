@@ -1,37 +1,52 @@
 # MITRE ATT&CK Threat Group Parser
 
-Python-скрипт для автоматизированного сбора и фильтрации данных о группировках угроз (Threat Actors) из репозитория MITRE ATT&CK. Инструмент предназначен для SOC-аналитиков и исследователей угроз (Threat Intelligence) для быстрого поиска APT-групп по целевым отраслям (например, Healthcare, Finance, Energy) или ключевым словам.
+A high-performance Python tool for SOC analysts and Threat Intelligence researchers to aggregate, filter, and deduplicate APT group data from multiple authoritative sources.
+Combines structured data from MITRE ATT&CK (v18.1+) with the community-driven APT Groups & Operations spreadsheet (scanning all regional tabs) to provide a unified, verified list of threat actors targeting specific sectors.
 
-### Возможности
-- Работа с конкретными версиями: Поддержка загрузки конкретных релизов матрицы (по умолчанию настроено на v18.1) через прямые ссылки на GitHub Releases.
-- Умный поиск: Фильтрация группировок (intrusion-set) по названию и описанию с учетом синонимов (например, запрос healthcare автоматически ищет также медицина, hospital, pharmaceutical).
-- Аналитика в памяти: Данные загружаются напрямую в RAM без создания временных файлов на диске (принцип чистоты и безопасности).
-- Экспорт результатов: Сохранение отфильтрованного списка в структурированный JSON для дальнейшей интеграции в SIEM или отчеты.
-- Расширенные данные: Извлечение имени, алиасов, MITRE ID, полного описания и прямой ссылки на карточку группы.
-
-### Требования
+### Key Features
+- Multi-Source Aggregation: Simultaneously queries:
+- Official MITRE ATT&CK releases (configurable version).
+- APT Groups & Operations Google Sheet (automatically scans all 8+ regional tabs).
+- Smart Deduplication: Automatically merges duplicates. If a group exists in both sources, it prioritizes the rich structured data from MITRE while flagging it as "Verified by Multiple Sources".
+- Sector-Specific Search: Enhanced lookup with synonyms (e.g., searching healthcare also matches medical, hospital, pharma, медицина).
+- Memory-First Architecture: Processes large datasets entirely in RAM. No temporary database files or raw JSON dumps are left on the disk, ensuring operational security.
+- Clean Reporting: Exports a consolidated, deduplicated report in JSON format, ready for SIEM ingestion or executive briefing.
+### Quick Start
 Python 3.6+
-Библиотека requests
+requests
 
 ``` pip install requests ```
 
-### Использование
-1. Запустите скрипт:
-``` python mitre_parser.py ```
-2. Введите ключевое слово для поиска (например, healthcare, banking, energy).
-3. Скрипт загрузит указанную версию матрицы, выполнит анализ и предложит сохранить результаты в файл.
+1. Run the scanner
+``` python ti_parser.py ```
+2. Enter your target keyword (e.g., healthcare, energy, finance).
 
-### Пример вывода
+### Example
 ```
-[*] Загрузка данных из MITRE ATT&CK v18.1...
-[*] В поиск включены синонимы: медицина, здравоохранение, hospital, medical
-[+] Найдено группировок: 14
+--- Global Threat Intel Parser (v18.1 + All Regions) ---
+Enter keyword: healthcare
 
-[1] APT29 | ID: G0016
-    Алиасы: Cozy Bear, The Dukes
-    Описание: Targets government, healthcare, and think tanks...
-    Ссылка: https://attack.mitre.org/groups/G0016/
+[*] Loading MITRE ATT&CK v18.1...
+[+] Found in MITRE: 14
+[*] Scanning 8 regions in Google Sheets...
+[+] Found in Google Sheets (raw): 22
+
+==================== UNIQUE GROUPS: 18 ====================
+[1] ✅ APT29
+    Sources: MITRE, Google Sheet
+    MITRE ID: G0016
+    Details: Targets government, healthcare, and think tanks...
+...
 ```
 
-Для работы с другой версией матрицы измените переменную VERSION в начале скрипта:
-``` VERSION = "18.1"  # Укажите нужную версию (например, "15.1", "14.0") ```
+### Configuration
+```
+Target MITRE Version
+VERSION = "18.1" 
+
+# Specific Google Sheet Region IDs (pre-configured for full coverage)
+REGION_GIDS = [
+    "361554658", "1636225066", "1905351590", 
+    "376438690", "300065512", "2069598202", 
+    "574287636", "438782970"
+```
